@@ -1,0 +1,23 @@
+nav {
+  ul {
+    list-style: none;
+    li {
+      float: left;
+    }
+  }
+}
+
+label {
+  font-weight: bold;
+}
+
+tr {
+  td {
+    max-width: 200px;
+    padding: 10px;
+  }
+  &:nth-child(odd) {
+    background: lightgrey;
+
+  }
+}

@@ -1,0 +1,16 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block content %}
+    <div class="timeline--container">
+        <ul class="timeline">
+            {% for entry in craft.entries.section('timeline') %}
+                <li class="timeline-event"><label class="timeline-event-icon"></label>
+                    <div class="timeline-event-copy"><p class="timeline-event-thumbnail">{{ entry.startdate|date('Y-m') }} - {{ entry.enddate|date('Y-m') }}</p>
+                        <h3>{{ entry.company }}</h3><h4>{{ entry.jobDescription }}</h4>
+                        {{ entry.jobInformations }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

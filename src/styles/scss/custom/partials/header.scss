@@ -1,0 +1,35 @@
+
+.navbar-lang {
+  .nav-container {
+    > div {
+    float:left;
+      padding: .5rem 1rem;
+    width:50%;
+  }
+  background: $mercury;
+    .navbar-right {
+
+      float: right;
+
+      .navbar-lang {
+        display: block;
+        > li {
+          float: left;
+          margin-right: 15px;
+        }
+      }
+    }
+  }
+  .logo {
+    width: 20rem;
+    display: block;
+    height: 6.60rem;
+    background: url(../../../images/interleasing-logo.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: right;
+    margin: 50px;
+  }
+}
+
+

@@ -1,0 +1,13 @@
+<h1>Tomorrow is not {{ now|date('M j, Y') }}.</h1>
+<h1>{{ entry.header }}</h1>
+
+<p>{{ entry.text }}</p>
+
+{% for image in entry.images %}
+<img src="/assets/images/{{ image.filename }}" width="{{ image.width }}" height="{{ image.height }}">
+{% endfor %}
+
+{% for newsEntry in craft.entries.section('newsDetail') %}
+    {{ dump(newsEntry) }}
+    <li><a href="/news/{{ newsEntry.slug }}">{{ newsEntry.title }}</a></li>
+{% endfor %}

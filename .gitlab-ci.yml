@@ -1,0 +1,65 @@
+stages:
+  - build
+  - deploy
+
+
+variables:
+  GIT_SSL_NO_VERIFY: "1"
+
+cms:
+  stage: build
+  image: ribase/composer
+  script:
+     - composer config --global --auth http-basic.repo.packagist.com ribase 899aaba3b1d40e94d60e463ecfe600f6c544376f8446e8c43d90f34f1554
+     - mkdir /root/.ssh
+     - touch /root/.ssh/known_hosts
+     - cd /root/.ssh
+     - echo "${SSH_PRIVATE_KEY}" > id_rsa
+     - chmod 0400 id_rsa
+     - ssh-keyscan -t rsa gitlab.cabag.ch >> ~/.ssh/known_host
+     - cd /builds/cabag/replace-me-gitname/src
+     - rm -rf vendor
+     - composer install --no-suggest --no-progress --ignore-platform-reqs
+  cache:
+      paths:
+      - src/vendor
+      - src/.composer
+  artifacts:
+    paths:
+    - src/
+assets:
+  stage: build
+  image: ribase/yarn
+  script:
+    - cd src/styles/
+    - npm -v
+    - yarn install
+    - yarn global add grunt-cli
+    - yarn global add grunt
+    - grunt generate
+  cache:
+      paths:
+      - /builds/cabag/replace-me-gitname/web/template/styles/node_modules
+  artifacts:
+    paths:
+    - src/web/template/dist/
+deploy:
+  stage: deploy
+  dependencies:
+    - cms
+    - assets
+  image: ribase/rsync
+  script:
+    - mkdir /root/.ssh
+    - touch /root/.ssh/known_hosts
+    - cd /root/.ssh
+    - echo "${SSH_PRIVATE_KEY}" > id_rsa
+    - chmod 0400 id_rsa
+    - ssh-keyscan -t rsa cabvs002.nine.ch >> ~/.ssh/known_hosts
+    - cd /builds/cabag/replace-me-gitname/
+    - chmod -R 755 /builds/cabag/replace-me-gitname
+    - rsync --no-perms -az --exclude=composer.json --exclude=composer.lock --exclude=.git* --exclude=.cache --exclude=styles/ /builds/cabag/replace-me-gitname/src/ replace-me-webroot@cabvs002.nine.ch:/home/www-emboss87/
+    - ssh replace-me-webroot@cabvs002.nine.ch "cd web ; ../vendor/bin/typo3cms install:generatepackagestates"
+    - ssh replace-me-webroot@cabvs002.nine.ch "cd web ; ../vendor/bin/typo3cms cache:flush"
+    - ssh replace-me-webroot@cabvs002.nine.ch "cd web ; ../vendor/bin/typo3cms install:fixfolderstructure"
+
